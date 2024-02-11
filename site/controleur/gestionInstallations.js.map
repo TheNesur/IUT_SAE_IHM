@@ -1,0 +1,1 @@
+{"version":3,"file":"gestionInstallations.js","sourceRoot":"","sources":["../src/controleur/gestionInstallations.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,uBAAuB,EAAE,MAAM,iCAAiC,CAAC;AAE1E,uBAAuB,CAAC,IAAI,CAAC;IACzB,UAAU,EAAE,QAAQ,CAAC,aAAa,CAAC,wBAAwB,CAAC;IAC5D,UAAU,EAAE,QAAQ,CAAC,aAAa,CAAC,kBAAkB,CAAC;CACzD,CAAC,CAAA"}
