@@ -51,6 +51,7 @@ class VueGestionInstallations {
             // tr.insertCell().textContent = Math.round(lesPrestationsByIntervention.getTotal(lesPrestations)*1.1) + ' €'; // à completer
             
             // let test = lesInterventions.listByIntervention(unIntervention.numInterv);
+            console.log(lesInterventions);
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['num_interv'];   
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['date_interv'];   
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['contrat'];  

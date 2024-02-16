@@ -4,7 +4,7 @@
 import { LesInterventions, UnIntervention } from "../modele/data_intervention";
 // import { LesClients, UnClient } from "../modele/data_client";
 // import { LesContrats, UnContrat } from "../modele/data_contrat";
-import { LesPrestationsByIntervention } from "../modele/data_prestation";
+import { LesPrestationsByIntervention, UnPrestationByIntervention } from "../modele/data_prestation";
 import { LesPrestations } from "../modele/data_prestation";
 class VueModificationInstallations {
     get form() { return this._form; }
@@ -83,16 +83,16 @@ class VueModificationInstallations {
         let titre;
         switch (this.params[0]) {
             case 'suppr':
-                titre = "Suppression d'une salle";
+                titre = "Suppression d'une intervention";
                 break;
             case 'ajout':
-                titre = "Nouvelle salle";
+                titre = "Nouvelle intervention";
                 break;
             case 'modif':
-                titre = "Modification d'une salle";
+                titre = "Modification d'une intervention";
                 break;
             default:
-                titre = "Détail d'une salle";
+                titre = "Détail d'une intervention";
                 break;
         }
         this.form.divTitre.textContent = titre;
@@ -150,7 +150,7 @@ class VueModificationInstallations {
         while (this.form.tableEquipement.rows.length > 1) {
             this.form.tableEquipement.rows[1].remove();
         }
-        let ht = 0, tva = 0;
+        let ht = 0;
         for (let id in this._grille) {
             const unPrestationByIntervention = this.grille[id];
             const tr = this.form.tableEquipement.insertRow();
@@ -276,7 +276,7 @@ class VueModificationInstallations {
             idPrestas.push(this._grille[i].libPrest);
         }
         for (let i in data) {
-            const id = data[i].libPrest;
+            const id = data[i].codePrest;
             if (idPrestas.indexOf(id) === -1)
                 this._form.listeEquipt.options.add(new Option(data[i].libPrest, id));
         }
@@ -290,12 +290,45 @@ class VueModificationInstallations {
     annulerPrestaClick() {
         this.cacherPrestaEdit();
     }
-    validerPrestaClick() {
+    verifListPresta() {
         const err = this._erreur.listeEquipt;
         err.statut = "correct";
         const cible = this._form.listeEquipt;
         if (cible.value === "")
             err.statut = 'vide';
+    }
+    verifQte() {
+        const err = this._erreur.edtQte;
+        err.statut = "correct";
+        const valeur = this._form.edtQte.value;
+        if (!((Number.isInteger(Number(valeur))) && (Number(valeur) > 0)))
+            err.statut = 'vide';
+    }
+    validerPrestaClick() {
+        let correct = true;
+        this.verifListPresta();
+        this.verifQte();
+        correct = this.traiteErreur(this._erreur.listeEquipt, this.form.lblSelectEquiptErreur) && correct;
+        correct = this.traiteErreur(this._erreur.edtQte, this.form.lblQteErreur) && correct;
+        if (correct) {
+            const lesPrestations = new LesPrestations;
+            const unPrestation = lesPrestations.byCodePrest(this._form.listeEquipt.value);
+            const unPrestationByIntervention = new UnPrestationByIntervention(unPrestation.codePrest, unPrestation.libPrest, unPrestation.tarifHt, this._form.edtQte.value);
+            console.log("Code listePresta :", this._form.edtQte.value);
+            console.log(lesPrestations.all());
+            console.log(unPrestation);
+            console.log(unPrestationByIntervention);
+            this._grille[unPrestation.codePrest] = unPrestationByIntervention;
+            this.affiGrillePrestations();
+            this.annulerPrestaClick();
+            /***
+             *
+             *  A FINIRRRRRR
+             *
+             *
+             * **/
+            this._form.edtQte.value = '';
+        }
     }
     afficherPrestaEdit() {
         this.form.divSalleEquipt.hidden = false;

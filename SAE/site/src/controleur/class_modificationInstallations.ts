@@ -132,10 +132,10 @@ class VueModificationInstallations {
 
         let titre :string;
         switch (this.params[0]) {
-            case 'suppr': titre = "Suppression d'une salle"; break 
-            case 'ajout': titre = "Nouvelle salle"; break 
-            case 'modif': titre = "Modification d'une salle"; break 
-            default: titre = "Détail d'une salle"; break;
+            case 'suppr': titre = "Suppression d'une intervention"; break 
+            case 'ajout': titre = "Nouvelle intervention"; break 
+            case 'modif': titre = "Modification d'une intervention"; break 
+            default: titre = "Détail d'une intervention"; break;
         }
 
         this.form.divTitre.textContent = titre;
@@ -207,7 +207,7 @@ class VueModificationInstallations {
     affiGrillePrestations(): void {
         while (this.form.tableEquipement.rows.length > 1) { this.form.tableEquipement.rows[1].remove(); }
 
-        let ht = 0, tva = 0;
+        let ht = 0;
         for (let id in this._grille) {
             const unPrestationByIntervention : UnPrestationByIntervention = this.grille[id];
             const tr = this.form.tableEquipement.insertRow();
@@ -350,7 +350,7 @@ class VueModificationInstallations {
         }
 
         for (let i in data) {
-            const id = data[i].libPrest;
+            const id = data[i].codePrest;
             if (idPrestas.indexOf(id) === -1)
                 this._form.listeEquipt.options.add(new Option(data[i].libPrest, id));
         }
@@ -397,8 +397,17 @@ class VueModificationInstallations {
                         unPrestation.codePrest, 
                         unPrestation.libPrest, 
                         unPrestation.tarifHt,
-                        
+                        this._form.edtQte.value
                     );
+
+            console.log("Code listePresta :", this._form.edtQte.value);
+            console.log(lesPrestations.all());
+            console.log(unPrestation);
+            console.log(unPrestationByIntervention);
+
+            this._grille[unPrestation.codePrest] = unPrestationByIntervention;
+            this.affiGrillePrestations();
+            this.annulerPrestaClick();
 
                     /***
                      * 
@@ -406,6 +415,7 @@ class VueModificationInstallations {
                      * 
                      * 
                      * **/
+        this._form.edtQte.value = '';
         
         }
     }
