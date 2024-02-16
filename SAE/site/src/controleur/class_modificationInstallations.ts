@@ -7,6 +7,7 @@ import {  LesInterventions, UnIntervention } from "../modele/data_intervention";
 // import { LesContrats, UnContrat } from "../modele/data_contrat";
 import { LesPrestationsByIntervention, TPrestationsByIntervention, UnPrestationByIntervention } from "../modele/data_prestation";
 import { LesPrestations, UnPrestation } from "../modele/data_prestation";
+import { LesContrats } from "../modele/data_contrat";
 
 type TStatutValeur = 'correct' | 'vide' | 'inconnu' | 'doublon';
 type TErreur = { statut: TStatutValeur, msg: { [key in TStatutValeur]: string } };
@@ -155,6 +156,16 @@ class VueModificationInstallations {
             this.form.edtObserv.readOnly = affi;
             this.form.edtCodeDept.readOnly = affi;
             this.form.edtDate.readOnly = affi;
+
+
+
+            // let t = new Date(Date.now());
+            // console.log("Test date1 : ", t.getTime());
+            // console.log("Test date 2: ", this.form.edtDate.valueAsDate.getTime());
+            // console.log("Diff time: ", ((t.getTime() - this.form.edtDate.valueAsDate.getTime()) / (1000*3600*24)).toFixed(0));
+
+
+            // if (Number(((t.getTime() - this.form.edtDate.valueAsDate.getTime()) / (1000*3600*24)).toFixed(0)) > 1) console.log("Ok");
             this.erreur.edtNum.statut = "correct";
 
             this.detailContrat(intervention.numCont);
@@ -254,7 +265,7 @@ class VueModificationInstallations {
     }
 
 
-    verifNum(valeur: string): void {
+    verifEdtNum(valeur: string): void {
         const lesInterventions = new LesInterventions;
         const err =this.erreur.edtNum;
         err.statut = "correct";
@@ -268,6 +279,21 @@ class VueModificationInstallations {
         } else err.statut = 'vide';
     }
 
+
+    verifEdtNumContrat(valeur: string): void {
+        const lesContrats = new LesContrats;
+        const err =this.erreur.edtCodeDept;
+        err.statut = "correct";
+
+        const chaine: string = valeur.trim();
+        if (chaine.length > 0) {
+            if (!chaine.match(/^([0-9]+)$/)) this.erreur.edtCodeDept.statut = 'doublon';
+            else if ((this.params[0] === 'ajout') && (lesContrats.byNumCont(valeur))) {
+                this.erreur.edtCodeDept.statut = 'doublon';
+            }
+        } else err.statut = 'vide';
+    }
+
     verifMotif(valeur: string): void {
         const err = this.erreur.edtMotif
         err.statut = "correct";
@@ -275,10 +301,18 @@ class VueModificationInstallations {
         if (chaine.length === 0) err.statut = 'vide';
     }
 
+    // verifDate(valeur: Date): void {
+    //     const err = this.erreur.edtMotif
+    //     err.statut = "correct";
+    //     const chaine: string = valeur.trim();
+    //     if (chaine.length === 0) err.statut = 'vide';
+    // }
     traiteErreur(uneErreur: TErreur, zone: HTMLElement): boolean {
         let correct = true;
         zone.textContent = "";
         if (uneErreur.statut !== "correct") {
+        console.log("uneErreur :", uneErreur);
+        console.log("zone :", zone);
             if (uneErreur.msg[uneErreur.statut] !== '') {
                 zone.textContent = uneErreur.msg[uneErreur.statut];
                 correct = false;
@@ -289,23 +323,30 @@ class VueModificationInstallations {
 
     validerClick(): void {
         let correct = true;
-        this.verifNum(this._form.edtNum.value);
+        this.verifEdtNum(this._form.edtNum.value);
+        this.verifEdtNumContrat(this._form.edtCodeDept.value);
         this.verifMotif(this._form.edtMotif.value);
-
+        
         if (JSON.stringify(this.grille) === '{}') { this._erreur.equipt.statut = 'vide'}
         else this._erreur.equipt.statut = 'correct';
 
-        console.log("Valider click: ", this._erreur.edtCodeDept);
         correct = this.traiteErreur(this._erreur.edtNum, this.form.lblNumErreur) && correct;
-        // correct = this.traiteErreur(this._erreur.edtDate, this.form.lblNumErreur) && correct;
+        console.log("test 1", correct);
+        // correct = this.traiteErreur(this._erreur.edtDate, this.form.lblNumErreur) && correct; // a corriger
         correct = this.traiteErreur(this._erreur.edtMotif, this.form.lblNumErreur) && correct;
-        // correct = this.traiteErreur(this._erreur.edtCodeDept, this.form.lblContErreur) && correct; // a corriger
+        console.log("test 2", correct);
+        correct = this.traiteErreur(this._erreur.edtCodeDept, this.form.lblContErreur) && correct; // a corriger
+        console.log("test 3", correct);qzdqzdqzdq
+
         correct = this.traiteErreur(this._erreur.equipt, this.form.lblEquiptErreur) && correct;
 
+return;
         const lesInterventions = new LesInterventions;
         const intervention = new UnIntervention;
 
+        console.log("test 2", correct);
         if (correct) {
+            console.log("test 3");
             intervention.numInterv = this.form.edtNum.value;
             intervention.objetInterv = this.form.edtMotif.value;
             intervention.dateInterv = this.form.edtDate.value;
@@ -318,6 +359,7 @@ class VueModificationInstallations {
             lesPrestationsByIntervention.delete(intervention.numInterv);
             lesPrestationsByIntervention.insert(intervention.numInterv, this.grille);
             this.retourClick();
+            console.log("test 4");
         }
     }
 
