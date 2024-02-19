@@ -70,33 +70,21 @@ class VueGestionInstallations {
 
     trierTableauParDate() {
       const table = this.form.tableSalle;
-      let rows: HTMLTableRowElement[] = Array.from(table.querySelectorAll('thead tr'));
+      let rows: HTMLTableRowElement[] = Array.from(table.querySelectorAll('thead tr')); 
     
-      const dataRows = rows.slice(1);
-    
-      const sortedRows = dataRows.sort((a, b) => {
+      const sortedRows = rows.sort((a, b) => {
         const dateAStr = a.cells[2].textContent.trim(); 
-        const dateBStr = b.cells[2].textContent.trim(); 
-        console.log("dateAStr",dateAStr);
-        console.log("dateBStr",dateBStr);
-    
-        // return dateBStr.localeCompare(dateAStr);
-        return dateAStr > dateBStr ? -1 : 1;
+        const dateBStr = b.cells[2].textContent.trim();
+        const dateA = new Date(dateAStr.split('/').reverse().join('/')); 
+        const dateB = new Date(dateBStr.split('/').reverse().join('/'));
+        return dateB.getTime() - dateA.getTime(); 
       });
     
-      const thead = table.querySelector('thead');
+      const thead = table.querySelector('thead'); 
       thead.innerHTML = ''; 
-      thead.appendChild(rows[0]); 
     
-      console.log(sortedRows[0]);
       sortedRows.forEach(row => {
-        const dateCell = row.cells[2]; 
-        // console.log(row);
-        if (dateCell.textContent.includes('-')) { 
-          const [year, month, day] = dateCell.textContent.trim().split('-');
-          dateCell.textContent = `${day}/${month}/${year}`;
-        }
-        thead.appendChild(row);
+        thead.appendChild(row); 
       });
     }
     

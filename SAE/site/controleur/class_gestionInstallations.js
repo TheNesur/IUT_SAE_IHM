@@ -39,30 +39,52 @@ class VueGestionInstallations {
     }
     trierTableauParDate() {
         const table = this.form.tableSalle;
-        let rows = Array.from(table.querySelectorAll('thead tr'));
-        const dataRows = rows.slice(1);
-        const sortedRows = dataRows.sort((a, b) => {
-            const dateAStr = a.cells[2].textContent.trim();
+        let rows = Array.from(table.querySelectorAll('thead tr')); // Sélectionnez les lignes du tbody, pas du thead
+        const sortedRows = rows.sort((a, b) => {
+            const dateAStr = a.cells[2].textContent.trim(); // Assurez-vous de supprimer les espaces vides autour de la date
             const dateBStr = b.cells[2].textContent.trim();
-            console.log("dateAStr", dateAStr);
-            console.log("dateBStr", dateBStr);
-            // return dateBStr.localeCompare(dateAStr);
-            return dateAStr > dateBStr ? -1 : 1;
+            const dateA = new Date(dateAStr.split('/').reverse().join('/')); // Convertissez les chaînes en objets Date pour une comparaison précise
+            const dateB = new Date(dateBStr.split('/').reverse().join('/'));
+            return dateB.getTime() - dateA.getTime(); // Tri décroissant des dates
         });
-        const thead = table.querySelector('thead');
-        thead.innerHTML = '';
-        thead.appendChild(rows[0]);
-        console.log(sortedRows[0]);
+        const tbody = table.querySelector('thead'); // Sélectionnez le tbody, pas le thead
+        tbody.innerHTML = ''; // Supprimez le contenu existant du tbody
         sortedRows.forEach(row => {
-            const dateCell = row.cells[2];
-            // console.log(row);
-            if (dateCell.textContent.includes('-')) {
-                const [year, month, day] = dateCell.textContent.trim().split('-');
-                dateCell.textContent = `${day}/${month}/${year}`;
-            }
-            thead.appendChild(row);
+            tbody.appendChild(row); // Ajoutez les lignes triées au tbody
         });
     }
+    /*
+    trierTableauParDate() {
+      const table = this.form.tableSalle;
+      let rows: HTMLTableRowElement[] = Array.from(table.querySelectorAll('thead tr'));
+    
+      const dataRows = rows.slice(1);
+    
+      const sortedRows = dataRows.sort((a, b) => {
+        const dateAStr = a.cells[2].textContent;
+        const dateBStr = b.cells[2].textContent;
+        console.log("dateAStr",dateAStr);
+        console.log("dateBStr",dateBStr);
+        console.log(dateBStr.localeCompare(dateAStr));
+        return dateBStr.localeCompare(dateAStr);
+      });
+    
+      const thead = table.querySelector('thead');
+      thead.innerHTML = '';
+      thead.appendChild(rows[0]);
+    
+      console.log(sortedRows);
+      sortedRows.forEach(row => {
+        const dateCell = row.cells[2];
+        // console.log(row);
+        if (dateCell.textContent.includes('-')) {
+          const [year, month, day] = dateCell.textContent.trim().split('-');
+          dateCell.textContent = `${day}/${month}/${year}`;
+        }
+        thead.appendChild(row);
+      });
+    }
+    */
     detailInterventionClick(num) {
         location.href = "modification-installations.html?affi&" + encodeURIComponent(num);
     }
