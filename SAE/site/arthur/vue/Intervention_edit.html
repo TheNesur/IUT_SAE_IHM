@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Intervention edit</title>
+    <link type="text/css" rel="stylesheet" href="./css/Intervention.css">
+  </head>
+  <body>
+    <section id="intervention_edit">
+        <div class="head">
+          <h1>Detail d'une intervention</h1>
+        </div>
+        <section class="Identification">
+          <div class="titre_sec"><h1>IDENTIFICATION</h1></div>
+          <div class="part1"><p class="aaa">numéro </p><input type="text" id="salle-text" size="4" class="aaa"></div>
+          <div class="part2"><p>le </p><input type="text" id="date_modif"><br><br><br><p>motif </p><br> <textarea id="iden_motif" ></textarea></div> 
+          <div class="part3"><br><br><br><p>observations</p><br><textarea id="iden_observations"></textarea></div>
+        </section>
+        <section class="Contrat">
+          <div class="titre_sec"><h1>CONTRAT</h1></div>
+          <div class="part1"><p class="aaa">numéro </p><input type="text" id="salle-text" size="4" class="aaa"></div>
+          <div class="part2"></div>
+          <div class="part3"></div>
+        </section>
+        <section class="Prestations">
+          <div class="titre_sec"><h1>PRESTATIONS</h1></div>
+          <div class="part1_1">
+            <div class="nv_titre_sec"><h2>Totaux</h2></div>
+            <table id="tableau_prestations">
+              <tr id="tr1">
+                <th style="width: 11%;">Code</th>
+                <th style="width: 50%;">Libellé</th>
+                <th style="width: 13%;">PUHT</th>
+                <th style="width: 13%;">quantité</th>
+                <th style="width: 13%;">montant</th>
+              </tr>
+            </table>
+            <button id="ajouter_nouvelle_prestations">Ajouter</button>
+          </div>
+          <div class="part2_2">
+            <div class="nv_titre_sec"0><h2>Choisir une prestations dans la liste </h2></div>
+            <div style="position: relative;top: 3px;width: 49.9%;float: left;"><select id="selectBat" size="6" style="width: 70%;">        
+            </select></div>
+            <div style="position: relative;top: 3px;width: 49.9%;float: left;"><p >quantité </p><input type="text" id="salle-text" size="4"></div><br><br>
+            <div><button id="ajouter_presta"><img src="./img/valider.png" alt=""></button><button id="annuler_presta" style="position: relative;left: 2%;"><img src="./img/annuler.png" alt=""></button></div>
+            
+          </div>
+        </section>
+      </section>
+  </body> 
+</html>
+
+

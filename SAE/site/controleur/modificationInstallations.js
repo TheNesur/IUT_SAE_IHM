@@ -11,6 +11,7 @@ vueModificationInstallations.init({
     btnValider: document.querySelector('[id=btn_salle_valider]'),
     btnAnnuler: document.querySelector('[id=btn_salle_annuler]'),
     lblDetailDept: document.querySelector('[id=lbl_salle_detail_dept]'),
+    lblDetailDep2: document.querySelector('[id=lbl_salle_detail2_dept]'),
     lblNumErreur: document.querySelector('[id=lbl_erreur_num]'),
     lblEtageErreur: document.querySelector('[id=lbl_erreur_etage]'),
     lblContErreur: document.querySelector('[id=lbl_erreur_cont]'),

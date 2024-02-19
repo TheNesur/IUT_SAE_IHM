@@ -7,7 +7,8 @@ import {  LesInterventions, UnIntervention } from "../modele/data_intervention";
 // import { LesContrats, UnContrat } from "../modele/data_contrat";
 import { LesPrestationsByIntervention, TPrestationsByIntervention, UnPrestationByIntervention } from "../modele/data_prestation";
 import { LesPrestations, UnPrestation } from "../modele/data_prestation";
-import { LesContrats } from "../modele/data_contrat";
+import { LesContrats, UnContrat } from "../modele/data_contrat";
+import { LesClients, UnClient } from "../modele/data_client";
 
 type TStatutValeur = 'correct' | 'vide' | 'inconnu' | 'doublon';
 type TErreur = { statut: TStatutValeur, msg: { [key in TStatutValeur]: string } };
@@ -24,6 +25,7 @@ type TModificationInstallationsForm = {
     btnValider: HTMLInputElement,
     btnAnnuler: HTMLInputElement,
     lblDetailDept: HTMLLabelElement,
+    lblDetailDep2: HTMLLabelElement,
     lblNumErreur: HTMLLabelElement,
     lblEtageErreur: HTMLLabelElement,
     lblContErreur: HTMLLabelElement,
@@ -86,13 +88,22 @@ class VueModificationInstallations {
                     , doublon: ""
                 }
             }
+            , edtDate: {
+                statut: 'vide'
+                , msg: {
+                    correct: ""
+                    , vide: ""
+                    , inconnu: ""
+                    , doublon: "Une intervention pour le contrat est déjà planifié à la même date d'intervention."
+                }
+            }
             , edtCodeDept: {
                 statut: 'vide'
                 , msg: {
                     correct: ""
                     , vide: "Le numéro de contrat doit être renseigné."
                     , inconnu: "Numéro de contrat inconnu."
-                    , doublon: ""
+                    , doublon: "What the fuck"
                 }
             }
             , equipt: {
@@ -143,6 +154,7 @@ class VueModificationInstallations {
         const lesInterventions = new LesInterventions;
         const affi = this.params[0] === 'affi';
 
+            this.form.edtNum.readOnly = true;
         if (this.params[0] !== 'ajout') {
             const intervention = lesInterventions.byNumInterv(this._params[1]);
             this.form.edtNum.value = intervention.numInterv;
@@ -151,11 +163,10 @@ class VueModificationInstallations {
             this.form.edtObserv.value = intervention.obsInterv;
             this.form.edtCodeDept.value = intervention.numCont;
         
-            this.form.edtNum.readOnly = true;
+            this.form.edtDate.readOnly = true;
             this.form.edtMotif.readOnly = affi;
             this.form.edtObserv.readOnly = affi;
             this.form.edtCodeDept.readOnly = affi;
-            this.form.edtDate.readOnly = affi;
 
 
 
@@ -169,11 +180,25 @@ class VueModificationInstallations {
             this.erreur.edtNum.statut = "correct";
 
             this.detailContrat(intervention.numCont);
+        } else {
+            this.form.edtNum.value = lesInterventions.getNouveauNumero();
+
+            let newDate = new Date();
+            const lendemain = new Date(newDate);
+            lendemain.setDate(newDate.getDate() + 1);
+            
+            // Formatage de la date du lendemain
+            const annee = lendemain.getFullYear();
+            const mois = (lendemain.getMonth() + 1).toString().padStart(2, '0'); // Les mois commencent à 0, donc ajoutez 1 et formatez
+            const jour = lendemain.getDate().toString().padStart(2, '0'); // Formatez le jour
+            const dateLendemain = `${annee}-${mois}-${jour}`;
+            
+            this.form.edtDate.value = dateLendemain;
         }
 
         this.affiPrestations();
         if (this.params[0] === 'suppr') {
-            console.log("Test");
+            // console.log("Test");
             setTimeout(() => {this.supprimer(this.params[1])}, 1000);
         }
 
@@ -201,7 +226,50 @@ class VueModificationInstallations {
      */
 
     detailContrat(numCont: string): void { 
-        console.log("DetailContrat: " + numCont);
+        // console.log("DetailContrat: " + numCont);
+        const err = this.erreur.edtCodeDept;
+        const lesConstrats = new LesContrats;
+        const detail = this.form.lblDetailDept;
+        const detail2 = this.form.lblDetailDep2;
+
+        detail.textContent = "";
+        detail2.textContent = "";
+        err.statut = "correct";
+        const chaine : string = String(numCont).trim();
+
+        if (chaine.length > 0) {
+            const contrat : UnContrat = lesConstrats.byNumCont(chaine);
+            const client : UnClient = new LesClients().byNumCli(contrat.numCli);
+            if (contrat.numCont != "") {
+
+                const [year, month, day] = contrat.dateCont.split('-');
+                const formattedDate = `${day}/${month}/${year}`;
+
+                detail.textContent = // <i>Site protégé</i> a ajouter
+                "site protégé" + "\r\n" 
+                + "contrat crée le  " + formattedDate + "\r\n" 
+                + contrat.adrSite + "\r\n"
+                + contrat.cpSite + " " + contrat.villeSite + "\r\n"+ "\r\n" ;
+
+                // console.log(client);
+                
+                detail2.textContent += // <i>Site protégé</i> a ajouter
+                "client" + "\r\n" 
+                + client.civCli + ' ' + client.nomCli + client.prenomCli + "\r\n" 
+                + client.melCli + "\r\n"
+                + client.telCli;
+
+            } else {
+                err.statut = 'inconnu';
+                detail.textContent = err.msg.inconnu;
+            }
+
+        } else {
+            err.statut = 'vide';
+        }
+        
+
+        // A FINIR BORDEL
 
     }
 
@@ -211,7 +279,7 @@ class VueModificationInstallations {
     affiPrestations(): void {
         const lesPrestationsByIntervention = new LesPrestationsByIntervention();
         this._grille = lesPrestationsByIntervention.byNumInterv(this.params[1]);
-        console.log("Affipresta");
+        // console.log("Affipresta");
         this.affiGrillePrestations();
     }
 
@@ -253,7 +321,7 @@ class VueModificationInstallations {
     }
 
     supprimer(numPrestation: string): void {
-        console.log("ban");
+        // console.log("ban");
         if (confirm("Confirmez-vous la suppression de la prestation "+ numPrestation)) {
             let lesPrestationsByIntervention: LesPrestationsByIntervention = new LesPrestationsByIntervention();
             lesPrestationsByIntervention.delete(numPrestation);
@@ -273,25 +341,26 @@ class VueModificationInstallations {
         const chaine: string = valeur.trim();
         if (chaine.length > 0) {
             if (!chaine.match(/^([0-9]+)$/)) this.erreur.edtNum.statut = 'doublon';
-            else if ((this.params[0] === 'ajout') && (lesInterventions.listByIntervention(valeur))) {
+            else if ((this.params[0] === 'ajout') && (lesInterventions.byNumInterv(valeur).numInterv == valeur)) { // a vérifier
                 this.erreur.edtNum.statut = 'doublon';
             }
         } else err.statut = 'vide';
     }
 
-
     verifEdtNumContrat(valeur: string): void {
         const lesContrats = new LesContrats;
-        const err =this.erreur.edtCodeDept;
+        const err = this.erreur.edtCodeDept;
         err.statut = "correct";
 
         const chaine: string = valeur.trim();
+        // console.log("OMG WHAT : ", chaine);
         if (chaine.length > 0) {
-            if (!chaine.match(/^([0-9]+)$/)) this.erreur.edtCodeDept.statut = 'doublon';
-            else if ((this.params[0] === 'ajout') && (lesContrats.byNumCont(valeur))) {
-                this.erreur.edtCodeDept.statut = 'doublon';
+            if (!chaine.match(/^([0-9]+)$/)) this.erreur.edtCodeDept.statut = 'inconnu';
+            else if ((this.params[0] === 'ajout') && (lesContrats.byNumCont(valeur).numCont != valeur)) {
+                this.erreur.edtCodeDept.statut = 'inconnu';
             }
-        } else err.statut = 'vide';
+        } else
+         err.statut = 'vide';
     }
 
     verifMotif(valeur: string): void {
@@ -301,18 +370,28 @@ class VueModificationInstallations {
         if (chaine.length === 0) err.statut = 'vide';
     }
 
-    // verifDate(valeur: Date): void {
-    //     const err = this.erreur.edtMotif
-    //     err.statut = "correct";
-    //     const chaine: string = valeur.trim();
-    //     if (chaine.length === 0) err.statut = 'vide';
-    // }
+    verifDate(dateVal: string, numContrat: string): void {
+        let err = this.erreur.edtDate;
+        err.statut = 'correct';
+
+        this.verifEdtNumContrat(this._form.edtCodeDept.value);
+        if (!this.traiteErreur(this._erreur.edtCodeDept, this.form.lblContErreur)) return;
+
+
+        let lesInterventions = new LesInterventions;
+        if (lesInterventions.byContratDate(numContrat, dateVal) != '')
+            err.statut = 'doublon';
+
+        // console.log("Test doublon: ", this._erreur.edtDate.statut);
+        // console.log("traiteErreur: ", lesInterventions.byContratDate(numContrat, dateVal));
+    }
+    
     traiteErreur(uneErreur: TErreur, zone: HTMLElement): boolean {
         let correct = true;
         zone.textContent = "";
         if (uneErreur.statut !== "correct") {
-        console.log("uneErreur :", uneErreur);
-        console.log("zone :", zone);
+            // console.log("uneErreur :", uneErreur.msg[uneErreur.statut], " = ",uneErreur.statut);
+            // console.log("zone :", zone);
             if (uneErreur.msg[uneErreur.statut] !== '') {
                 zone.textContent = uneErreur.msg[uneErreur.statut];
                 correct = false;
@@ -324,29 +403,40 @@ class VueModificationInstallations {
     validerClick(): void {
         let correct = true;
         this.verifEdtNum(this._form.edtNum.value);
-        this.verifEdtNumContrat(this._form.edtCodeDept.value);
+        this.verifEdtNumContrat(this._form.edtCodeDept.value); // normalement bon mais a vérifier
         this.verifMotif(this._form.edtMotif.value);
+        
+        if (this.params[0] !== 'modif') {
+            this.verifDate(this._form.edtDate.value, this._form.edtCodeDept.value);
+        }
+
         
         if (JSON.stringify(this.grille) === '{}') { this._erreur.equipt.statut = 'vide'}
         else this._erreur.equipt.statut = 'correct';
 
         correct = this.traiteErreur(this._erreur.edtNum, this.form.lblNumErreur) && correct;
-        console.log("test 1", correct);
-        // correct = this.traiteErreur(this._erreur.edtDate, this.form.lblNumErreur) && correct; // a corriger
+        // console.log("test 1", correct);
+
         correct = this.traiteErreur(this._erreur.edtMotif, this.form.lblNumErreur) && correct;
-        console.log("test 2", correct);
-        correct = this.traiteErreur(this._erreur.edtCodeDept, this.form.lblContErreur) && correct; // a corriger
-        console.log("test 3", correct);qzdqzdqzdq
+        // console.log("test 2", correct);
+
+        if (this.params[0] !== 'modif') {
+            // console.log("Date new : ", this._erreur.edtDate.statut)
+            correct = this.traiteErreur(this._erreur.edtDate, this.form.lblNumErreur) && correct; // a corriger
+            // console.log("Date : ", correct);
+        }
+
+        correct = this.traiteErreur(this._erreur.edtCodeDept, this.form.lblContErreur) && correct; // a corriger // contrat
+        // console.log("test 3", correct);
 
         correct = this.traiteErreur(this._erreur.equipt, this.form.lblEquiptErreur) && correct;
+        // console.log("test 4", correct);
 
-return;
         const lesInterventions = new LesInterventions;
         const intervention = new UnIntervention;
 
-        console.log("test 2", correct);
+
         if (correct) {
-            console.log("test 3");
             intervention.numInterv = this.form.edtNum.value;
             intervention.objetInterv = this.form.edtMotif.value;
             intervention.dateInterv = this.form.edtDate.value;
@@ -359,7 +449,6 @@ return;
             lesPrestationsByIntervention.delete(intervention.numInterv);
             lesPrestationsByIntervention.insert(intervention.numInterv, this.grille);
             this.retourClick();
-            console.log("test 4");
         }
     }
 
@@ -372,6 +461,7 @@ return;
         
         const lesPrestations = new LesPrestations();
         const unPrestation: UnPrestation = lesPrestations.byCodePrest(id);
+
 
         this.form.listeEquipt.length = 0;
         this.form.listeEquipt.options.add(new Option(unPrestation.libPrest, id));
@@ -388,7 +478,7 @@ return;
         const idPrestas = [];
 
         for (let i in this._grille) {
-            idPrestas.push(this._grille[i].libPrest);
+            idPrestas.push(this._grille[i].codePrest);
         }
 
         for (let i in data) {
@@ -442,10 +532,10 @@ return;
                         this._form.edtQte.value
                     );
 
-            console.log("Code listePresta :", this._form.edtQte.value);
-            console.log(lesPrestations.all());
-            console.log(unPrestation);
-            console.log(unPrestationByIntervention);
+            // console.log("Code listePresta :", this._form.edtQte.value);
+            // console.log(lesPrestations.all());
+            // console.log(unPrestation);
+            // console.log(unPrestationByIntervention);
 
             this._grille[unPrestation.codePrest] = unPrestationByIntervention;
             this.affiGrillePrestations();

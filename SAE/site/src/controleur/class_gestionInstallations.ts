@@ -17,24 +17,17 @@ class VueGestionInstallations {
 
     get form() : TGestionInstallationsForm { return this._form; }
 
+
     init(form: TGestionInstallationsForm ) {
         this._form = form;
 
         const lesInterventions = new LesInterventions;
-        // const lesClients = new LesClients();
-        // const lesContrats = new LesContrats();
-        // const lesPrestationsByIntervention = new LesPrestationsByIntervention();
 
         const dataInterventions = lesInterventions.all();
-        // const dataClients = lesClients;
-        // const dataContrats = lesContrats;
 
         for (let num in dataInterventions) {
             const unIntervention : UnIntervention = dataInterventions[num];
 
-            // let unContrats : UnContrat = lesContrats.byNumCont(unIntervention.numCont);
-            // let unClient : UnClient = lesClients.byNumCli(unContrats.numCli);
-            // let lesPrestations : TPrestationsByIntervention = lesPrestationsByIntervention.byNumInterv(unIntervention.numInterv);
 
             const tr = this.form.tableSalle.insertRow();
 
@@ -44,24 +37,16 @@ class VueGestionInstallations {
             balisae.onclick = function(): void {vueGestionInstallations.detailInterventionClick(unIntervention.numInterv); } // à completer
             tr.insertCell().appendChild(balisae); // cell balise 'a' pour détails
 
-            // tr.insertCell().textContent = unIntervention.numInterv;                              // cell num int
-            // tr.insertCell().textContent = unIntervention.dateInterv;                             // cell date int
-            // tr.insertCell().textContent = unContrats.numCont +  ' - ' + unContrats.villeSite; // cell ville contrat
-            // tr.insertCell().textContent = unClient.numCli + ' - ' + unClient.nomCli;
-            // tr.insertCell().textContent = Math.round(lesPrestationsByIntervention.getTotal(lesPrestations)*1.1) + ' €'; // à completer
+
+            // console.log(lesInterventions.all());
             
-            // let test = lesInterventions.listByIntervention(unIntervention.numInterv);
-            console.log(lesInterventions);
+
+            
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['num_interv'];   
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['date_interv'];   
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['contrat'];  
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['client'];  
             tr.insertCell().textContent = lesInterventions.listByIntervention(unIntervention.numInterv)[0]['montant'];  
-
-
-
-            
-
 
             // tr.insertCell().textContent = lesPrestations
 
@@ -77,8 +62,41 @@ class VueGestionInstallations {
             balisae.onclick = function(): void { vueGestionInstallations.supprimerInterventionClick(unIntervention.numInterv); }
             tr.insertCell().appendChild(balisae);
         }
-
         this.form.btnAjouter.onclick = function(): void { vueGestionInstallations.AjouterInterventionClick(); }
+
+        this.trierTableauParDate();
+
+    }
+
+    trierTableauParDate() {
+     /* const table = this.form.tableSalle;
+      // let rows: HTMLTableRowElement[] = Array.from(table.querySelectorAll('thead tr'));
+      let rows: HTMLTableRowElement[] = Array.from(table.querySelectorAll('thead tr tr'));
+
+
+      console.log(Array.from(table.querySelectorAll('thead tr')));
+      const dataRows = rows.slice(1);
+      const sortedRows = dataRows.sort((a, b) => {
+        const dateAStr = a.cells[2].textContent.trim(); 
+        const dateBStr = b.cells[2].textContent.trim(); 
+    
+        return dateBStr.localeCompare(dateAStr);
+      });
+      console.log(sortedRows);
+    
+      const thead = table.querySelector('thead');
+      thead.innerHTML = ''; 
+      // thead.appendChild(rows[0]); 
+    
+      sortedRows.forEach(row => {
+        const dateCell = row.cells[2]; 
+        if (dateCell.textContent.includes('-')) { 
+          const [year, month, day] = dateCell.textContent.trim().split('-');
+          dateCell.textContent = `${day}/${month}/${year}`;
+        }
+        thead.appendChild(row);
+      });
+      */
     }
 
     detailInterventionClick(num : string): void {

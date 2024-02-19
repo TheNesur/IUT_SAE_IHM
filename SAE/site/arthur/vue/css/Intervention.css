@@ -1,0 +1,178 @@
+body{
+  background-color: #f2f2f2c7;
+  width: 1300px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.head{
+  background-color: rgb(68, 68, 68);
+  height: 30px;
+  color: white;
+}
+
+.head h1{
+  position: relative;
+  left: 5px;
+  top: 1px;
+  display : inline;
+  font-size: 20px;
+}
+
+p{
+  display : inline;
+}
+
+textarea{
+  position: relative;
+  top: -20px;
+  left: 50px;
+  height: 80px;
+  width: 450px;
+}
+
+
+
+#intervention_liste{
+  background-color: aquamarine;
+  width: 100%;
+  height: 390px;
+}
+
+#intervention_liste #ajouter_nouvelle_interventions{
+  position: relative;
+  left: 91%;
+  top: 4px;
+  width: 100px;
+  height: 30px;
+  background-color: rgb(59, 121, 255);
+  color: white;
+  border: none;
+}
+
+#intervention_edit #ajouter_nouvelle_prestations{
+  position: relative;
+  left: 82%;
+  top: 10px;
+  width: 100px;
+  height: 30px;
+  background-color: rgb(59, 121, 255);
+  color: white;
+  border: none;
+}
+
+table{
+  width: 100%;
+  text-align: left;
+  
+}
+
+/* Mettre un trait sous le th*/
+th{
+  border-bottom: 2px solid black;
+}
+  
+
+
+.part3 textarea{
+  left: 100px;
+  width: 420px;
+}
+
+
+.Prestations .nv_titre_sec{
+  position: relative;
+  left: -2px;
+  top: 2px;
+  background-color: rgb(68, 68, 68);
+  height: 27px;
+  color: white;
+  width: 101%;
+}
+.nv_titre_sec h2{
+  position: relative;
+  left: 5px;
+  top: 1px;
+  display : inline;
+  font-size: 15px;
+  font-style: normal;
+}
+
+.titre_sec{
+  position: relative;
+  left: -2px;
+  background-color: rgb(68, 68, 68);
+  height: 30px;
+  color: white;
+  width: 295px;
+  
+}
+
+.titre_sec h1{
+  position: relative;
+  left: 5px;
+  top: 1px;
+  display : inline;
+  font-size: 20px;
+}
+
+
+
+
+.Identification{
+  height: 200px;
+  background-color: blueviolet;
+  padding: 3px;
+}
+
+.Contrat{
+  height: 200px;
+  background-color: rgb(212, 55, 255);
+  padding: 3px;
+}
+
+.Prestations{
+  height: 200px;
+  background-color: blueviolet;
+  padding: 3px;
+}
+
+
+
+.part1{
+  background-color: cornflowerblue;
+  width: 17.33%;
+  float: left;
+  height: 170px;
+}
+.part2{
+  background-color: red;
+  width: 41.33%;
+  float: left;
+  height: 170px;
+}
+.part3{
+  background-color: greenyellow;
+  width: 41.33%;
+  float: left;
+  height: 170px;
+}
+
+.part1_1{
+  background-color: rgb(61, 162, 61);
+  width: 49.9%;
+  float: left;
+  height: 170px;
+}
+.part2_2{
+  background-color: rgb(184, 73, 73);
+  width: 49.9%;
+  float: left;
+  height: 170px;
+}
+
+.aaa{
+  position: relative;
+  top: 15px;
+  left: 50px;
+}

@@ -3,25 +3,25 @@
 // dans dossier web
 // puis dans /ihm/IHM_API/
 	
-	require_once ("./MyConnexionBdd.class.php");
+require_once ("./MyConnexionBdd.class.php");
 
-	function bdOpen ($host, $port, $bdname, $user, $pwd, $charset, $driver)
-	{
-		return MyConnexion::getInstance($host, $port, $bdname, $user, $pwd, $charset, $driver);		
-	}
-	
-	function resultat ($sp)      
-	{
-		$data = [];
-	    $t = [];
-	    while ($row = $sp->fetch(PDO::FETCH_ASSOC))
-		{		
-			$t[]=$row;	
-		}
-		$data['resultat'] = $t;
+function bdOpen ($host, $port, $bdname, $user, $pwd, $charset, $driver)
+{
+	return MyConnexion::getInstance($host, $port, $bdname, $user, $pwd, $charset, $driver);		
+}
 
-	    return json_encode($data);
+function resultat ($sp)      
+{
+	$data = [];
+	$t = [];
+	while ($row = $sp->fetch(PDO::FETCH_ASSOC))
+	{		
+		$t[]=$row;	
 	}
+	$data['resultat'] = $t;
+
+	return json_encode($data);
+}
 
 $obj = json_decode($_POST['bd']);
 if (!empty((array) $obj)) {

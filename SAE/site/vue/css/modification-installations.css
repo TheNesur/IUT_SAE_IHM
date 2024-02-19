@@ -4,7 +4,7 @@
     margin-top: 5px;
     text-align: left;
     display: grid;
-    grid-template-columns: 1fr 1fr 8fr;
+    grid-template-columns: 1fr 1fr 1fr 8fr;
     grid-gap: 10px;
 }
 
@@ -24,6 +24,13 @@
 }
 
 .salle_commentaire {
+    text-align: left;
+    font-size: 0.9em;
+    white-space: pre;
+    /* sauts de ligne \r\n conservés */
+}
+
+.salle_commentaire2 {
     text-align: left;
     font-size: 0.9em;
     white-space: pre;
